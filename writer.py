@@ -4,7 +4,6 @@ import sys
 import time
 from collections import deque
 import pandas as pd
-from openpyxl import load_workbook
 
 import data_process
 import reader
@@ -131,6 +130,8 @@ if __name__ == '__main__':
     fm = formWriter("config.json")
     fm.start()
     data = {"country": "CH", "name": "shen"}
+    data2 = {"country": "CH"}
     for i in range(10):
         fm.write_data(data)
+        fm.write_data(data2)
     time.sleep(10)

@@ -1,25 +1,17 @@
 {
   "1": {
   "filePath": "./dataset/",
-  "fileName": "test1",
+  "fileName": "被攻击组织",
   "fileType": "csv",
-  "fields": {"country": "CT", "name": "NM"},
-  "recall": "demo"
-  },
-
-  "2": {
-  "filePath": "./dataset/",
-  "fileName": "test2",
-  "fileType": "csv",
-  "fields": {"country": "CT"},
-  "recall": "demo"
-  },
-
-  "3": {
-  "filePath": "./dataset/",
-  "fileName": "test3",
-  "fileType": "csv",
-  "fields": {"name": "NM"},
+  "fields": {"id": "id:ID",
+              "country": "国籍",
+              "industry": "行业",
+              "name": "名称",
+              "description": "描述",
+              "type": "类别",
+              "location": "所在地",
+              "function": "职能"},
   "recall": "demo"
   }
+
 }
