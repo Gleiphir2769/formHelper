@@ -1,0 +1,25 @@
+{
+  "1": {
+  "filePath": "./dataset/",
+  "fileName": "test1",
+  "fileType": "csv",
+  "fields": {"country": "CT", "name": "NM"},
+  "recall": "demo"
+  },
+
+  "2": {
+  "filePath": "./dataset/",
+  "fileName": "test2",
+  "fileType": "csv",
+  "fields": {"country": "CT"},
+  "recall": "demo"
+  },
+
+  "3": {
+  "filePath": "./dataset/",
+  "fileName": "test3",
+  "fileType": "csv",
+  "fields": {"name": "NM"},
+  "recall": "demo"
+  }
+}
