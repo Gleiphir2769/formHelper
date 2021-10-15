@@ -12,6 +12,26 @@
               "location": "所在地",
               "function": "职能"},
   "recall": "demo"
+  },
+
+  "2": {
+  "filePath": "./dataset/",
+  "fileName": "攻击技术",
+  "fileType": "csv",
+  "fields": {"id": "id:ID",
+              "capec_id": "capec_id",
+              "mtc_id": "mtc_id",
+              "frequency": "使用频率",
+              "start_time": "创建时间",
+              "alias": "别名",
+              "dangerous_class": "危险程度",
+              "name": "名称",
+              "description": "描述",
+              "type": "类别",
+              "location": "所在地",
+              "function": "职能"},
+  "recall": "demo"
   }
 
 }
+

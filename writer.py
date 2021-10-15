@@ -13,6 +13,7 @@ import recall
 
 stop_flag = False
 
+mutex = threading.Lock()
 
 class formWriter:
     def __init__(self, config_name: string):
@@ -85,9 +86,10 @@ class form:
 
     def persis_to_excel(self, entry):
         df = pd.DataFrame(entry)
-
+        mutex.acquire()
         if not os.path.exists(self.file_path):
             os.makedirs(self.file_path)
+        mutex.release()
         path = self.file_path + self.file_name + ".xlsx"
         if not os.path.exists(path):
             open(path, 'w')
@@ -99,9 +101,10 @@ class form:
 
     def persis_to_csv(self, entry):
         df = pd.DataFrame(entry)
-
+        mutex.acquire()
         if not os.path.exists(self.file_path):
             os.makedirs(self.file_path)
+        mutex.release()
         path = self.file_path + self.file_name + ".csv"
         if not os.path.exists(path):
             open(path, 'w')
