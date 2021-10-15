@@ -70,7 +70,7 @@ def init():
 
 安装依赖：`pip install -r requirements.txt`
 
-启动：`python3 main.py` （可后跟）
+启动：`python3 main.py` 或 `python3 main.py your_ip your_port`(自定义ip port)
 
 ```bash
 INFO:   Started server process [32883]
