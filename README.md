@@ -15,7 +15,7 @@
 ```json
 {
   "ID": {
-    "filePath": "./dataset/",
+    "filePath": "./dataset/entity/",
     "fileName": "被攻击组织",
     "fileType": "csv",
     "fields": {"id": "id:ID",

@@ -15,7 +15,6 @@ def aof_handle():
         else:
             time.sleep(0.1)
 
-
 def start():
     t = threading.Thread(target=aof_handle, daemon=True)
     t.start()
