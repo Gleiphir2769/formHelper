@@ -19,6 +19,9 @@ test/
 
 *.log
 
+# user identify
+data_process.py
+
 # Dependency directories (remove the comment below to include it)
 vendor/
 log/

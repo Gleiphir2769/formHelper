@@ -7,6 +7,7 @@ import time
 from collections import deque
 import pandas as pd
 
+import aof
 import data_process
 import reader
 import threading
@@ -17,11 +18,13 @@ stop_flag = False
 
 mutex = threading.Lock()
 
+
 class formWriter:
     def __init__(self, config_name: string):
         self.writeConfig = dict()
         self.config_name = config_name
         self.persis_threads = []
+        self.backup_buffer = deque()
 
     def start(self):
         self.load_config(self.config_name)
@@ -31,7 +34,7 @@ class formWriter:
     def load_config(self, config_name):
         config = reader.json_read(config_name)
         if config is None:
-            print("config file is not exist in this dictionary, please check")
+            logging.error("config file is not exist in this dictionary, please check")
             sys.exit(-1)
         for form_name, form_config in config.items():
             f = form(form_name, form_config)
@@ -47,12 +50,13 @@ class formWriter:
         stop_flag = True
         for t in self.persis_threads:
             t.join()
-        print("close completed")
+        logging.info("close completed")
 
     def write_data(self, data: dict):
         for form in self.writeConfig.values():
             if not form.write(data):
                 return False
+        aof.write_aof(data)
         return True
 
 
@@ -67,6 +71,7 @@ class form:
         self.file_name = config["fileName"]
         self.file_type = config["fileType"]
         self.fields = config["fields"]
+        self.entity = {v: "" for k, v in self.fields.items()}
         self.recall_enable = False
         self.buffer = deque()
         if "recall" in config.keys():
@@ -78,12 +83,16 @@ class form:
         return self.fields.__contains__(in_field)
 
     def write(self, data):
-        entry = dict()
+        entry = dict.copy(self.entity)
+        is_blank_row = True
         for in_field, field in self.fields.items():
             if data.__contains__(in_field):
                 entry[field] = [data[in_field]]
-        if not stop_flag:
+                is_blank_row = False
+        if not stop_flag and not is_blank_row:
             self.buffer.append(entry)
+            return True
+        elif is_blank_row:
             return True
         return False
 
@@ -110,8 +119,8 @@ class form:
         mutex.release()
         path = self.file_path + self.file_name + ".csv"
         if not os.path.exists(path):
-            open(path, 'w')
-            df.to_csv(self.file_path + self.file_name + ".csv", index=False, mode='a')
+            # open(path, 'w')
+            df.to_csv(self.file_path + self.file_name + ".csv", index=False, mode='w')
         else:
             df.to_csv(self.file_path + self.file_name + ".csv", index=False, mode='a', header=False)
 
@@ -141,4 +150,3 @@ if __name__ == '__main__':
         fm.write_data(data)
         fm.write_data(data2)
     time.sleep(10)
-

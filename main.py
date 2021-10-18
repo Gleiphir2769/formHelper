@@ -3,6 +3,7 @@ import sys
 import uvicorn
 from fastapi import FastAPI, Request
 
+import aof
 import data_process
 import writer
 
@@ -13,6 +14,7 @@ form_writer = writer.formWriter("config.json")
 @app.post("/send_data")
 async def handle_data(request: Request):
     data_json = await request.json()
+    print(data_json)
     result = form_writer.write_data(data_json)
     return {"result": result}
 
@@ -29,6 +31,7 @@ if __name__ == '__main__':
         server_address = (sys.argv[1], port)
 
     data_process.init()
+    aof.start()
     form_writer.start()
 
     uvicorn.run(app, port=port)
