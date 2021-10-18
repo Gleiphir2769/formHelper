@@ -1,6 +1,8 @@
+import logging
 import os
 import string
 import sys
+import syslog
 import time
 from collections import deque
 import pandas as pd
@@ -57,9 +59,9 @@ class formWriter:
 class form:
     def __init__(self, name, config: dict):
         self.name = name
-        for value in config.values():
+        for key, value in config.items():
             if value is None or value == "":
-                print("config content is invalid, check form: '{}' -- '{}'".format(name, value))
+                logging.error("config content can not be '""', check form: {}: {}".format(name, key))
                 sys.exit(-1)
         self.file_path = config["filePath"]
         self.file_name = config["fileName"]
@@ -67,9 +69,10 @@ class form:
         self.fields = config["fields"]
         self.recall_enable = False
         self.buffer = deque()
-        if recall.is_registered(config["recall"]):
-            self.recall = recall.get_recall(config["recall"])
-            self.recall_enable = True
+        if "recall" in config.keys():
+            if recall.is_registered(config["recall"]):
+                self.recall = recall.get_recall(config["recall"])
+                self.recall_enable = True
 
     def contain(self, in_field):
         return self.fields.__contains__(in_field)
@@ -138,3 +141,4 @@ if __name__ == '__main__':
         fm.write_data(data)
         fm.write_data(data2)
     time.sleep(10)
+
