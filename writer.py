@@ -25,8 +25,12 @@ class formWriter:
         self.config_name = config_name
         self.persis_threads = []
         self.backup_buffer = deque()
+        self.preprocess = None
 
     def start(self):
+        preprocess, ok = recall.get_preprocess_recall()
+        if ok:
+            self.preprocess = preprocess
         self.load_config(self.config_name)
         for t in self.persis_threads:
             t.start()
@@ -53,6 +57,8 @@ class formWriter:
         logging.info("close completed")
 
     def write_data(self, data: dict):
+        if self.preprocess is not None:
+            data = self.preprocess(data)
         for form in self.writeConfig.values():
             if not form.write(data):
                 return False
@@ -90,6 +96,8 @@ class form:
                 entry[field] = [data[in_field]]
                 is_blank_row = False
         if not stop_flag and not is_blank_row:
+            if self.recall_enable:
+                entry = self.recall(entry)
             self.buffer.append(entry)
             return True
         elif is_blank_row:
@@ -128,8 +136,6 @@ class form:
         while True:
             if len(self.buffer) > 0:
                 entry = self.buffer.popleft()
-                if self.recall_enable:
-                    entry = self.recall(entry)
                 if self.file_type == "csv":
                     self.persis_to_csv(entry)
                 elif self.file_type == "xlsx":

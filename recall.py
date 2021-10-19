@@ -13,3 +13,16 @@ def is_registered(recall_name):
     return recall_table.__contains__(recall_name)
 
 
+def is_preprocess_registered():
+    return recall_table.__contains__("preprocess")
+
+
+def get_preprocess_recall():
+    if is_preprocess_registered():
+        return recall_table["preprocess"], True
+    else:
+        return None, False
+
+
+def register_preprocess(recall):
+    recall_table["preprocess"] = recall
