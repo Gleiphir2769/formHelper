@@ -56,9 +56,9 @@ class formWriter:
             t.join()
         logging.info("close completed")
 
-    def write_data(self, data: dict):
+    def write_data(self, data: dict, prefix=""):
         if self.preprocess is not None:
-            data = self.preprocess(data)
+            data = self.preprocess(data, prefix=prefix)
         for form in self.writeConfig.values():
             if not form.write(data):
                 return False
@@ -91,8 +91,10 @@ class form:
     def write(self, data):
         entry = dict.copy(self.entity)
         is_blank_row = True
+        if data.__contains__("output_prefix"):
+            entry["output_prefix"] = data["output_prefix"]
         for in_field, field in self.fields.items():
-            if data.__contains__(in_field):
+            if data.__contains__(in_field) and data[in_field] != "":
                 entry[field] = [data[in_field]]
                 is_blank_row = False
         if not stop_flag and not is_blank_row:
@@ -110,7 +112,10 @@ class form:
         if not os.path.exists(self.file_path):
             os.makedirs(self.file_path)
         mutex.release()
-        path = self.file_path + self.file_name + ".xlsx"
+        if entry.__contains__("output_prefix"):
+            path = entry["output_prefix"] + '_' + self.file_path + self.file_name + ".xlsx"
+        else:
+            path = self.file_path + self.file_name + ".xlsx"
         if not os.path.exists(path):
             open(path, 'w')
             writer = pd.ExcelWriter(path, mode='a')
@@ -122,15 +127,19 @@ class form:
     def persis_to_csv(self, entry):
         df = pd.DataFrame(entry)
         mutex.acquire()
-        if not os.path.exists(self.file_path):
-            os.makedirs(self.file_path)
-        mutex.release()
-        path = self.file_path + self.file_name + ".csv"
-        if not os.path.exists(path):
-            # open(path, 'w')
-            df.to_csv(self.file_path + self.file_name + ".csv", index=False, mode='w')
+        if entry.__contains__("output_prefix"):
+            path = entry["output_prefix"] + '_output_' + self.file_path.replace('.', '')
         else:
-            df.to_csv(self.file_path + self.file_name + ".csv", index=False, mode='a', header=False)
+            path = self.file_path
+        if not os.path.exists(path):
+            os.makedirs(path)
+        mutex.release()
+        file_path = path + self.file_name + ".csv"
+        if not os.path.exists(file_path):
+            # open(path, 'w')
+            df.to_csv(file_path, index=False, mode='w', encoding="utf_8_sig")
+        else:
+            df.to_csv(file_path, index=False, mode='a', header=False, encoding="utf_8_sig")
 
     def persist(self):
         while True:

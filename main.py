@@ -11,6 +11,13 @@ app = FastAPI()
 form_writer = writer.formWriter("config.json")
 
 
+@app.post("/send_data/{name}")
+async def handle_data(request: Request, name: str):
+    data_json = await request.json()
+    result = form_writer.write_data(data_json, prefix=name)
+    return {"result": result}
+
+
 @app.post("/send_data")
 async def handle_data(request: Request):
     data_json = await request.json()
