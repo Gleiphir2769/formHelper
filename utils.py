@@ -18,6 +18,7 @@ def items_dir(root_path):
             l.append(file_path)
     return l
 
+
 if __name__ == '__main__':
     if len(sys.argv) != 2:
         print("ERR wrong number of arguments，")
