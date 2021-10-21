@@ -62,6 +62,21 @@ def init():
 
 回调函数的输入entry为待处理的输出数据项，key对应该输出文件的key。value是一个列表项，里面为待处理的一批数据。
 
+##### 数据预处理：
+
+支持对输入的数据进行预处理（因为数据进入回调后即无法改变回调绑定的配置文件之外的数据）。recall提供注册预处理函数的api：`recall.register_preprocess(your_pre_process)`。回调函数在data_precess.py中编写。
+
+```python
+def pre_process(data: Dict[str, list], **kwargs) -> Dict[str, list]:
+    for _, v in kwargs.items():
+        if kwargs.__contains__("prefix") and kwargs["prefix"] != "":
+            data["output_prefix"] = v
+
+    return data
+```
+
+（为了实现按路由分别输出不同的目录，在预处理函数中耦合一段逻辑，这样不甚合理，期待后人修改）
+
 ## Quick Start：
 
 配置环境：python 3.8
@@ -83,3 +98,5 @@ INFO:   Uvicorn running on **http://127.0.0.1:9090** (Press CTRL+C to quit)
 ```
 
 终端输出如上信息即启动成功。
+
+
